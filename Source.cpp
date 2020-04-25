@@ -1,135 +1,133 @@
 #include <iostream>
 #include <fstream>
-#include <iomanip>
+#include<string>
+#include<stdlib.h>
 #include <math.h>
 
-/*task 1(d) 2(a,b,c) (18/04/2020). Generate an array with random numbers in the range [-70;50]. 
-Create a program that will count the number of shuffling actions. 
-Analyze the dependence of the number of permutations on the number of elements in an array.*/
+using namespace std;
 
-int iterPermutationsSort1 = 0;
-int iterPermutationsSort = 0;
-int iterSort = 0;
+/*task 3(d) and 4 (25/04/2020). Declare the essence and describe its properties. 
+Declare entity arrays. Fill attributes with numerical and text values (define the range of values yourself).
+Analyze the dependence of the number of permutations on the number of elements in an array.
+For each of the arrays, implement a key (structure attribute) search.
+For each of the arrays to implement sorting one key.*/
 
-void insertionSort(int array[], int n) {
+struct Plant {
+
+	string name;
+	float weight, caloricValue;
+	char vitamins;
 	
-	float key = 0;
-	int j;
+};
 
-	for (int i = 1; i < n; i++){
-		
-		key = array[i]; 
-		j = i - 1;
-		
-
-		while (j >= 0 && array[j] > key){
-			
-			array[j + 1] = array[j];
-			j = j - 1;
-			array[j + 1] = key;
-			iterSort += 1;
-
-		}
-	}
-	std::cout << std::endl;
-	std::cout << "Number of permutations for insertion sort: " << iterSort << std::endl;
-	
-}
-
-void selelctSort(int array[], int n) {
+void selelctSort(Plant fruits[], int n) {
 	
 	int j = 0;
-	int passing = 0;
+	Plant tmp;
 	
-	for (int i = 0; i < n; i++){
+	for(int i = 0; i < n; i++){
 		
 		j = i;
 
 		for (int k = i; k < n; k++){
 
-			if (array[j] > array[k]){
+			if (fruits[j].caloricValue > fruits[k].caloricValue){
 
 				j = k;
-				iterPermutationsSort += 1;
-
+			
 			}
 		}
-		passing = array[i];
-		array[i] = array[j];
-		array[j] = passing;
+		tmp = fruits[i];
+		fruits[i] = fruits[j];
+		fruits[j] = tmp;
 	}
-	std::cout<<std::endl;
-	std::cout << "Number of permutations for selection sort: " << iterPermutationsSort << std::endl;
 }
 
-void bubbleSort(int array[], int n){
-	
-	float passing = 0;
-	
-	for (int i = 0; i < n; i++) {
-		
-		for (int j = n - 1; j >= i + 1; j--) {
-
-			if (array[j] < array[j - 1]) {  
-				
-				passing = array[j];
-				array[j] = array[j - 1];
-				array[j - 1] = passing;
-				iterPermutationsSort1 += 1;
-
-			}
-		}
-	}
-	std::cout << std::endl;
-	std::cout << "Number of permutations for bubbles sort: " << iterPermutationsSort1 << std::endl;
-}
-
-void fileWork(int iterSort, int iterPermutationsSort, int iterPermutationsSort1) {
+void fileWork(const Plant parametrs[], const int n) {
 	std::ofstream file;
 	file.open("result.txt");
 
-	file << "Number of permutations for insertion sort: " << iterSort << std::endl
-		<< "Number of permutations for selection sort: " << iterPermutationsSort << std::endl
-		<< "Number of permutations for bubbles sort: " << iterPermutationsSort1 << std::endl;
-
+	for (int i = 0; i < n; i++) {
+		file << parametrs[i].name << "\t"
+			<< parametrs[i].caloricValue << "\t"
+			<< parametrs[i].vitamins << "\t"
+			<< parametrs[i].weight << "\t"
+			<< endl;
+	}
 	file.close();
 }
 
-void sorts(int array[], int n) {
+void namesCreate(string& str) {
+	static const char alphabet[] =
+		"ABCDEFGHIGKLMNOPQRSTUVWXYZ"
+		"abcdefghigklmnopqrstuvwxyz"
+		"1234567890";
 
-	//selelctSort(array, n); //375 Permutations. n = 120.
-	insertionSort(array, n); // 3573 Permutations. n = 120.
-	//bubbleSort(array, n); // 3573 Permutations. n = 120.
+	str = "  ";
+	for (int i = 0; i < str.length(); i++) {
+		
+		int r = rand() % (sizeof(alphabet) - 1);
+		str[i] = alphabet[r];
 
+	}
+	str[str.length()] = 0;
 }
+
+void showParFruit(const Plant parametrs) {
+	cout << parametrs.name << "\t"
+		<< parametrs.caloricValue << "\t"
+		<< parametrs.vitamins << "\t"
+		<< parametrs.weight << "\t"
+		<< endl;
+}
+
+void caloriesSearch(const Plant parametrs[]) {
+
+	const float calkey = 250.75;
+	const int lim = 1000;
+
+	for (int i = 0; i < lim; i++) {
+		if (parametrs[i].caloricValue >= calkey)
+			showParFruit(parametrs[i]);
+	}
+}
+
+void vitaminsSearch(const Plant parametrs[]){
+
+	const int vKey = 233;
+	const int lim1 = 256;
+
+	for (int i = 197; i < lim1; i++) {
+		if (parametrs[i].vitamins < vKey) {
+			showParFruit(parametrs[i]);
+		}
+	}
+}
+
 
 int main() {
 
-	const int n = 120;
-	int array[n];
+	const int n = 256;
+	Plant fruits[n];
 	
 	srand(100);
-	
-	for (int i = 0; i < n; i++){
 
-		array[i] = rand() % 121 - 70;
-		std::cout << array[i] << " ";
+	for (int i = 0; i < n; i++) { 
 
-	}
-	
-	std::cout << std::endl << std::endl;
-	sorts(array, n);
-	
-	fileWork(iterSort, iterPermutationsSort, iterPermutationsSort1);
-
-	std::cout << std::endl << std::endl;
-	for (int i = 0; i < n; i++){
-
-		std::cout << array[i] << " ";
+		fruits[i].caloricValue = rand() % 1000;
+		fruits[i].weight = (float) 1000 * rand() / RAND_MAX;
+		fruits[i].vitamins = (char)i;
+		showParFruit(fruits[i]);
+		namesCreate(fruits[i].name);
 
 	}
-
 	
+	selelctSort(fruits, n);
+
+	for (int i = 0; i < n; i++)
+		showParFruit(fruits[i]);
+
+	fileWork(fruits, n);
 
 	getchar();
 	getchar();
@@ -137,5 +135,4 @@ int main() {
 	return 0;
 }
 
-/* при выполнении заметил, что сортировка выбором быстрее, чем вставками и пузырьками в силу того, 
-что для последних двух способов требуется несколько проходов по массиву и перестановок*/
+/* ��� ���������� �������� ������������ ���� ������*/
